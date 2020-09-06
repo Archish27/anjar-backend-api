@@ -58,7 +58,8 @@ def add_user():
     return response
 
 
-def insert_user(category: str, category_name: str, code: str, user_name: str, address: str, email: str, phone_number: str):
+def insert_user(category: str, category_name: str, code: str, user_name: str, address: str, email: str,
+                phone_number: str):
     if category:
         category_dict = json.loads(category)
         print('json---------------', type(category_dict))
@@ -76,12 +77,6 @@ def get_users():
     customers = User.query.all()
     return render_template('index.html', items=customers)
 
-
-# @app.route("/data", methods=["GET"])
-# def get_data():
-#     return render_template('index.html', items=get_users())
-
-    return render_template('index.html', items=customers)
 
 if __name__ == '__main__':
     app.run(debug=True)
