@@ -41,7 +41,7 @@ def add_user():
     code = str(uuid.uuid4())[:8]
     name = request.form.get('name')
     address = request.form.get('address')
-    email = request.form.get('email')
+    email = request.form.get('email_id')
     phone_number = request.form.get('phone_number')
     katha = request.form.get('katha')
     insert_user(katha, 'Katha', code, name, address, email, phone_number)
