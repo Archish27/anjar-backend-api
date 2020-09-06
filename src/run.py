@@ -1,12 +1,10 @@
 import uuid
-from flask import Flask, jsonify, make_response, request
 from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, jsonify, make_response, request
 
-# from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
 db = SQLAlchemy(app)
-# ma = Marshmallow(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:root@127.0.0.1:3306/mandir"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -17,10 +15,6 @@ class User(db.Model):
     code = db.Column(db.String(10), unique=True, nullable=False)
     info = db.Column(db.JSON, nullable=False)
 
-
-# class UserSchema(ma.ModelSchema):
-#     class Meta:
-#         model = User
 
 @app.route('/sample', methods=["GET", "POST"])
 def hello():
@@ -47,19 +41,21 @@ def add_user():
         ),
         200,
     )
-    # response.headers["Content-Type"] = "application/json"
     return response
 
 
 @app.route("/get-customers", methods=["GET"])
 def get_users():
     customers = User.query.all()
-    # user_schema = UserSchema(many=True)
-    # output = user_schema.dump(customers).data
-    # return jsonify({'user': output})
+    customer_list = []
+    for customer in customers:
+        customer_list.append({
+            'uuid': customer.code,
+            'info': customer.info
+        })
     response = make_response(
         jsonify(
-            {"customers": customers}
+            {"customers": customer_list}
         ),
         200,
     )
