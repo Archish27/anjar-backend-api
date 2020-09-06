@@ -3,11 +3,11 @@ import uuid
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, jsonify, make_response, request
 from flask import render_template
-# from flask_httpauth import HTTPBasicAuth
+from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-# auth = HTTPBasicAuth()
+auth = HTTPBasicAuth()
 db = SQLAlchemy(app)
 
 users = {
@@ -51,11 +51,11 @@ def add_user():
     address = request.form.get('address')
     email = request.form.get('email_id')
     phone_number = request.form.get('phone_number')
-    katha = request.form.get('katha')
+    katha = request.form.get('katha').replace('\\','')
     insert_user(katha, 'Katha', code, name, address, email, phone_number)
-    mahapuja = request.form.get('mahapuja')
+    mahapuja = request.form.get('mahapuja').replace('\\','')
     insert_user(mahapuja, 'Mahapuja', code, name, address, email, phone_number)
-    utsavo = request.form.get('utsavo')
+    utsavo = request.form.get('utsavo').replace('\\','')
     insert_user(utsavo, 'Utsavo', code, name, address, email, phone_number)
     response = make_response(
         jsonify(
@@ -70,17 +70,19 @@ def insert_user(category: str, category_name: str, code: str, user_name: str, ad
                 phone_number: str):
     if category:
         category_dict = json.loads(category)
-        print('json---------------', type(category_dict))
         plan = category_dict['name']
         price = category_dict['price']
-        members = category_dict['members'] if category_dict['members'] else 0
-        user = User(code=code, user_name=user_name, address=address, email_id=email, phone_number=phone_number,
+        if 'members' in category_dict:
+            members = category_dict['members']
+        else:
+            members = 0    
+        user = User(code=code, name=user_name, address=address, email_id=email, phone_number=phone_number,
                     category=category_name, plan=plan, price=price, members=members)
         db.session.add(user)
         db.session.commit()
 
 
-# @auth.verify_password
+@auth.verify_password
 def verify_password(username, password):
     if username in users and \
             check_password_hash(users.get(username), password):
@@ -88,7 +90,7 @@ def verify_password(username, password):
 
 
 @app.route("/", methods=["GET"])
-# @auth.login_required
+@auth.login_required
 def get_users():
     customers = User.query.all()
     return render_template('index.html', items=customers)
