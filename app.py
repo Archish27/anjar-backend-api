@@ -5,6 +5,7 @@ from flask import Flask, jsonify, make_response, request
 from flask import render_template
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
+import os
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
@@ -17,6 +18,7 @@ users = {
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = os.urandom(24)
 
 
 class User(db.Model):
