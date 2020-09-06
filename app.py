@@ -2,6 +2,7 @@ import json
 import uuid
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, jsonify, make_response, request
+from flask import render_template
 
 app = Flask(__name__)
 db = SQLAlchemy(app)
@@ -81,6 +82,9 @@ def get_users():
     )
     return response
 
+@app.route("/data", methods=["GET"])
+def get_data():
+    return render_template('index.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
