@@ -65,26 +65,10 @@ def insert_user(category: str, name: str, code: str, user_name: str, address: st
         db.session.commit()
 
 
-@app.route("/get-customers", methods=["GET"])
+@app.route("/get", methods=["GET"])
 def get_users():
     customers = User.query.all()
-    customer_list = []
-    for customer in customers:
-        customer_list.append({
-            'uuid': customer.code,
-            'info': customer.info
-        })
-    response = make_response(
-        jsonify(
-            {"customers": customer_list}
-        ),
-        200,
-    )
-    return response
-
-@app.route("/data", methods=["GET"])
-def get_data():
-    return render_template('index.html')
+    return render_template('index.html', items=customers)    
 
 if __name__ == '__main__':
     app.run(debug=True)
