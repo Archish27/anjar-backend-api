@@ -3,11 +3,11 @@ import uuid
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, jsonify, make_response, request
 from flask import render_template
-from flask_httpauth import HTTPBasicAuth
+# from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-auth = HTTPBasicAuth()
+# auth = HTTPBasicAuth()
 db = SQLAlchemy(app)
 
 users = {
@@ -51,7 +51,7 @@ def add_user():
     address = request.form.get('address')
     email = request.form.get('email_id')
     phone_number = request.form.get('phone_number')
-    katha = request.form.get('katha')
+    katha = request.form.json('katha')
     insert_user(katha, 'Katha', code, name, address, email, phone_number)
     mahapuja = request.form.get('mahapuja')
     insert_user(mahapuja, 'Mahapuja', code, name, address, email, phone_number)
@@ -79,14 +79,16 @@ def insert_user(category: str, category_name: str, code: str, user_name: str, ad
         db.session.add(user)
         db.session.commit()
 
-@auth.verify_password
+
+# @auth.verify_password
 def verify_password(username, password):
     if username in users and \
             check_password_hash(users.get(username), password):
         return username
 
+
 @app.route("/", methods=["GET"])
-@auth.login_required
+# @auth.login_required
 def get_users():
     customers = User.query.all()
     return render_template('index.html', items=customers)
