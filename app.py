@@ -3,11 +3,19 @@ import uuid
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, jsonify, make_response, request
 from flask import render_template
+from flask_httpauth import HTTPBasicAuth
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
+auth = HTTPBasicAuth()
 db = SQLAlchemy(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:root@127.0.0.1:3306/mandir"
+users = {
+    "admin": generate_password_hash("anjaradmin"),
+    "test": generate_password_hash("testadmin")
+}
+
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:@127.0.0.1:3306/mandir"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
@@ -71,8 +79,14 @@ def insert_user(category: str, category_name: str, code: str, user_name: str, ad
         db.session.add(user)
         db.session.commit()
 
+@auth.verify_password
+def verify_password(username, password):
+    if username in users and \
+            check_password_hash(users.get(username), password):
+        return username
 
-@app.route("/get-customers", methods=["GET"])
+@app.route("/", methods=["GET"])
+@auth.login_required
 def get_users():
     customers = User.query.all()
     return render_template('index.html', items=customers)
