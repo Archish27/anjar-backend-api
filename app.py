@@ -51,7 +51,7 @@ def add_user():
     address = request.form.get('address')
     email = request.form.get('email_id')
     phone_number = request.form.get('phone_number')
-    katha = request.form.json('katha')
+    katha = request.form.get('katha')
     insert_user(katha, 'Katha', code, name, address, email, phone_number)
     mahapuja = request.form.get('mahapuja')
     insert_user(mahapuja, 'Mahapuja', code, name, address, email, phone_number)
