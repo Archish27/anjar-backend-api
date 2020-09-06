@@ -81,6 +81,7 @@ def get_users():
 # def get_data():
 #     return render_template('index.html', items=get_users())
 
+    return render_template('index.html', items=customers)
 
 if __name__ == '__main__':
     app.run(debug=True)
